@@ -1,0 +1,77 @@
+{# album_songs/index.html — Manage album ↔ song associations #}
+{% extends "base.html" %}
+
+{% block title %}Album ↔ Songs{% endblock %}
+{% block topbar_title %}Album ↔ Songs{% endblock %}
+
+{% block content %}
+
+  {# ── Add association form ─────────────────────────────────── #}
+  <div class="add-row">
+    <form method="POST" action="{{ url_for('album_songs.add') }}"
+          style="display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap;width:100%">
+
+      <div class="form-group">
+        <label for="album_id">Album</label>
+        <select id="album_id" name="album_id" required>
+          <option value="">— album —</option>
+          {% for album in albums %}
+            <option value="{{ album.id }}">{{ album.title }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="song_id">Song</label>
+        <select id="song_id" name="song_id" required>
+          <option value="">— song —</option>
+          {% for song in songs %}
+            <option value="{{ song.id }}">{{ song.title }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <button type="submit" class="btn btn--primary btn--sm">Add</button>
+    </form>
+  </div>
+
+  <p class="record-count">{{ rows|length }} association{{ 's' if rows|length != 1 }}</p>
+
+  {# ── Associations table ───────────────────────────────────── #}
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Album</th>
+          <th>Song</th>
+          {% if current_user.is_superuser %}<th style="width:100px">Actions</th>{% endif %}
+        </tr>
+      </thead>
+      <tbody>
+        {% for row in rows %}
+        <tr>
+          <td>{{ row.album_title }}</td>
+          <td>{{ row.song_title }}</td>
+          {% if current_user.is_superuser %}
+          <td>
+            <form method="POST" action="{{ url_for('album_songs.remove') }}"
+                  style="display:inline"
+                  onsubmit="return confirm('Remove this association?')">
+              <input type="hidden" name="album_id" value="{{ row.album_id }}">
+              <input type="hidden" name="song_id"  value="{{ row.song_id }}">
+              <button type="submit" class="btn btn--danger btn--sm">Remove</button>
+            </form>
+          </td>
+          {% endif %}
+        </tr>
+        {% else %}
+        <tr>
+          <td colspan="{{ 3 if current_user.is_superuser else 2 }}"
+              style="text-align:center;color:#9e9e9e">No associations yet.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+{% endblock %}

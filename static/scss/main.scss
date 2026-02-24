@@ -1,0 +1,432 @@
+// ============================================================
+// main.scss — Music Database Manager
+// Compiled to static/css/main.css by build_css.py (libsass).
+// No CSS framework is used; all styles are hand-written here.
+// ============================================================
+
+// ── Colour palette ────────────────────────────────────────────
+$green-dark:    #1b5e20;   // sidebar background, headings
+$green-mid:     #2e7d32;   // primary buttons, links
+$green-light:   #e8f5e9;   // page background
+$green-border:  #a5d6a7;   // table borders, card borders
+
+$orange-dark:   #e65100;   // delete buttons, danger badges
+$orange-mid:    #f57c00;   // active nav, hover accents
+$orange-light:  #fff3e0;   // warning flash background
+
+$white:         #ffffff;
+$grey-light:    #f5f5f5;
+$grey-mid:      #9e9e9e;
+$grey-dark:     #424242;
+$text:          #212121;
+
+// ── Typography ────────────────────────────────────────────────
+$font-sans: 'Segoe UI', Arial, Helvetica, sans-serif;
+$font-size-base: 14px;
+$line-height: 1.5;
+
+// ── Spacing ───────────────────────────────────────────────────
+$sidebar-w: 200px;
+$header-h:  52px;
+$radius:    4px;
+$gap:       12px;
+
+// ── Reset & base ──────────────────────────────────────────────
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  height: 100%;
+  font-family: $font-sans;
+  font-size: $font-size-base;
+  line-height: $line-height;
+  background: $green-light;
+  color: $text;
+  overflow: hidden;   // no page-level scroll
+}
+
+a { color: $green-mid; text-decoration: none; }
+a:hover { color: $orange-mid; text-decoration: underline; }
+
+// ── Layout shell ──────────────────────────────────────────────
+.layout {
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+}
+
+// ── Sidebar ───────────────────────────────────────────────────
+.sidebar {
+  width: $sidebar-w;
+  min-width: $sidebar-w;
+  background: $green-dark;
+  color: $white;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+
+  &__logo {
+    padding: 14px $gap;
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    border-bottom: 1px solid rgba(255,255,255,0.15);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__section-label {
+    padding: 8px $gap 2px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.5);
+  }
+
+  nav {
+    flex: 1;
+    overflow-y: auto;
+    padding-bottom: $gap;
+  }
+
+  &__link {
+    display: block;
+    padding: 7px $gap;
+    color: rgba(255,255,255,0.85);
+    font-size: 13px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    border-left: 3px solid transparent;
+    transition: background 0.15s, border-color 0.15s;
+
+    &:hover {
+      background: rgba(255,255,255,0.1);
+      color: $white;
+      text-decoration: none;
+    }
+
+    &--active {
+      background: rgba(255,255,255,0.15);
+      border-left-color: $orange-mid;
+      color: $white;
+      font-weight: 600;
+    }
+  }
+
+  &__footer {
+    padding: $gap;
+    border-top: 1px solid rgba(255,255,255,0.15);
+    font-size: 12px;
+    color: rgba(255,255,255,0.7);
+
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 6px;
+
+      .avatar {
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        background: $orange-mid;
+        color: $white;
+        font-weight: 700;
+        font-size: 13px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+      }
+
+      .username { font-weight: 600; color: $white; }
+    }
+
+    .signout-link {
+      color: rgba(255,255,255,0.6);
+      font-size: 12px;
+      &:hover { color: $white; text-decoration: none; }
+    }
+  }
+}
+
+// ── Main content area ─────────────────────────────────────────
+.main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  min-width: 0;
+}
+
+.topbar {
+  height: $header-h;
+  min-height: $header-h;
+  background: $white;
+  border-bottom: 1px solid $green-border;
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  gap: $gap;
+
+  &__title {
+    font-size: 16px;
+    font-weight: 700;
+    color: $green-dark;
+    flex: 1;
+  }
+
+  &__actions { display: flex; gap: 8px; align-items: center; }
+}
+
+.content {
+  flex: 1;
+  overflow: hidden;
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: $gap;
+  min-height: 0;
+}
+
+// ── Flash messages ────────────────────────────────────────────
+.flash-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.flash {
+  padding: 7px 12px;
+  border-radius: $radius;
+  font-size: 13px;
+  border: 1px solid transparent;
+
+  &--success { background: #e8f5e9; border-color: $green-border; color: $green-dark; }
+  &--danger  { background: #ffebee; border-color: #ef9a9a;       color: #b71c1c;    }
+  &--warning { background: $orange-light; border-color: #ffcc80; color: #e65100;    }
+  &--info    { background: #e3f2fd; border-color: #90caf9;       color: #0d47a1;    }
+}
+
+// ── Dashboard cards ───────────────────────────────────────────
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: $gap;
+  flex-shrink: 0;
+}
+
+.stat-card {
+  background: $white;
+  border: 1px solid $green-border;
+  border-radius: $radius;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  transition: border-color 0.15s;
+
+  &:hover { border-color: $orange-mid; text-decoration: none; }
+
+  &__count {
+    font-size: 28px;
+    font-weight: 700;
+    color: $green-dark;
+    line-height: 1;
+  }
+
+  &__label {
+    font-size: 12px;
+    color: $grey-mid;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+}
+
+// ── Data table ────────────────────────────────────────────────
+.table-wrap {
+  flex: 1;
+  overflow: auto;
+  border: 1px solid $green-border;
+  border-radius: $radius;
+  background: $white;
+  min-height: 0;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+
+  th {
+    background: $green-dark;
+    color: $white;
+    padding: 8px 12px;
+    text-align: left;
+    font-weight: 600;
+    white-space: nowrap;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+  }
+
+  td {
+    padding: 7px 12px;
+    border-bottom: 1px solid #f0f0f0;
+    vertical-align: middle;
+  }
+
+  tr:last-child td { border-bottom: none; }
+
+  tr:hover td { background: $green-light; }
+}
+
+.record-count {
+  font-size: 12px;
+  color: $grey-mid;
+  flex-shrink: 0;
+}
+
+// ── Buttons ───────────────────────────────────────────────────
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 14px;
+  border-radius: $radius;
+  font-size: 13px;
+  font-family: $font-sans;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  text-decoration: none;
+  transition: opacity 0.15s, background 0.15s;
+  white-space: nowrap;
+
+  &:hover { opacity: 0.88; text-decoration: none; }
+
+  &--primary  { background: $green-mid;   color: $white; }
+  &--secondary{ background: $grey-light;  color: $grey-dark; border: 1px solid #ddd; }
+  &--danger   { background: $orange-dark; color: $white; }
+  &--sm       { padding: 4px 10px; font-size: 12px; }
+}
+
+// ── Forms ─────────────────────────────────────────────────────
+.form-card {
+  background: $white;
+  border: 1px solid $green-border;
+  border-radius: $radius;
+  padding: 20px;
+  max-width: 480px;
+  flex-shrink: 0;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 12px;
+
+  label {
+    font-size: 12px;
+    font-weight: 600;
+    color: $grey-dark;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+  }
+
+  input[type="text"],
+  input[type="password"],
+  input[type="number"],
+  select,
+  textarea {
+    padding: 7px 10px;
+    border: 1px solid $green-border;
+    border-radius: $radius;
+    font-size: 13px;
+    font-family: $font-sans;
+    background: $white;
+    color: $text;
+    outline: none;
+    transition: border-color 0.15s;
+
+    &:focus { border-color: $green-mid; }
+  }
+
+  textarea { resize: vertical; min-height: 60px; }
+}
+
+.form-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+// ── Login page ────────────────────────────────────────────────
+.login-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, $green-light 0%, $orange-light 100%);
+  overflow: hidden;
+}
+
+.login-card {
+  background: $white;
+  border: 1px solid $green-border;
+  border-radius: $radius * 2;
+  padding: 32px 28px;
+  width: 320px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+
+  &__logo {
+    text-align: center;
+    margin-bottom: 20px;
+
+    h1 {
+      font-size: 18px;
+      font-weight: 700;
+      color: $green-dark;
+    }
+
+    p {
+      font-size: 12px;
+      color: $grey-mid;
+      margin-top: 2px;
+    }
+  }
+}
+
+// ── Badge ─────────────────────────────────────────────────────
+.badge {
+  display: inline-block;
+  padding: 2px 7px;
+  border-radius: 10px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+
+  &--superuser { background: $orange-mid; color: $white; }
+  &--user      { background: $green-border; color: $green-dark; }
+}
+
+// ── Junction add-form row ─────────────────────────────────────
+.add-row {
+  display: flex;
+  align-items: flex-end;
+  gap: $gap;
+  background: $white;
+  border: 1px solid $green-border;
+  border-radius: $radius;
+  padding: 12px 16px;
+  flex-shrink: 0;
+  flex-wrap: wrap;
+
+  .form-group { margin-bottom: 0; flex: 1; min-width: 140px; }
+}

@@ -1,0 +1,47 @@
+{# genres/index.html — List all genres #}
+{% extends "base.html" %}
+
+{% block title %}Genres{% endblock %}
+{% block topbar_title %}Genres{% endblock %}
+
+{% block topbar_actions %}
+  <a href="{{ url_for('genres.create') }}" class="btn btn--primary btn--sm">+ New Genre</a>
+{% endblock %}
+
+{% block content %}
+  <p class="record-count">{{ genres|length }} record{{ 's' if genres|length != 1 }}</p>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th style="width:60px">ID</th>
+          <th>Name</th>
+          <th style="width:130px">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for genre in genres %}
+        <tr>
+          <td>{{ genre.id }}</td>
+          <td>{{ genre.name }}</td>
+          <td>
+            <a href="{{ url_for('genres.edit', genre_id=genre.id) }}"
+               class="btn btn--secondary btn--sm">Edit</a>
+            {% if current_user.is_superuser %}
+            <form method="POST"
+                  action="{{ url_for('genres.delete', genre_id=genre.id) }}"
+                  style="display:inline"
+                  onsubmit="return confirm('Delete genre \'{{ genre.name }}\'?')">
+              <button type="submit" class="btn btn--danger btn--sm">Delete</button>
+            </form>
+            {% endif %}
+          </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="3" style="text-align:center;color:#9e9e9e">No genres yet.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endblock %}

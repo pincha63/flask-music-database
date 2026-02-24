@@ -1,0 +1,51 @@
+{# albums/index.html — List all albums with artist name #}
+{% extends "base.html" %}
+
+{% block title %}Albums{% endblock %}
+{% block topbar_title %}Albums{% endblock %}
+
+{% block topbar_actions %}
+  <a href="{{ url_for('albums.create') }}" class="btn btn--primary btn--sm">+ New Album</a>
+{% endblock %}
+
+{% block content %}
+  <p class="record-count">{{ albums|length }} record{{ 's' if albums|length != 1 }}</p>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th style="width:60px">ID</th>
+          <th>Title</th>
+          <th>Artist</th>
+          <th style="width:90px">Year</th>
+          <th style="width:130px">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for album in albums %}
+        <tr>
+          <td>{{ album.id }}</td>
+          <td>{{ album.title }}</td>
+          <td>{{ album.artist_name }}</td>
+          <td>{{ album.release_year or '—' }}</td>
+          <td>
+            <a href="{{ url_for('albums.edit', album_id=album.id) }}"
+               class="btn btn--secondary btn--sm">Edit</a>
+            {% if current_user.is_superuser %}
+            <form method="POST"
+                  action="{{ url_for('albums.delete', album_id=album.id) }}"
+                  style="display:inline"
+                  onsubmit="return confirm('Delete album \'{{ album.title }}\'?')">
+              <button type="submit" class="btn btn--danger btn--sm">Delete</button>
+            </form>
+            {% endif %}
+          </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="5" style="text-align:center;color:#9e9e9e">No albums yet.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endblock %}

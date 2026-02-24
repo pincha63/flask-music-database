@@ -1,0 +1,52 @@
+{# artists/index.html — List all artists with Edit and (superuser) Delete actions #}
+{% extends "base.html" %}
+
+{% block title %}Artists{% endblock %}
+{% block topbar_title %}Artists{% endblock %}
+
+{% block topbar_actions %}
+  <a href="{{ url_for('artists.create') }}" class="btn btn--primary btn--sm">+ New Artist</a>
+{% endblock %}
+
+{% block content %}
+  <p class="record-count">{{ artists|length }} record{{ 's' if artists|length != 1 }}</p>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th style="width:60px">ID</th>
+          <th>Name</th>
+          <th>Bio</th>
+          <th style="width:130px">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for artist in artists %}
+        <tr>
+          <td>{{ artist.id }}</td>
+          <td>{{ artist.name }}</td>
+          <td>{{ artist.bio or '—' }}</td>
+          <td>
+            {# Edit is available to all authenticated users #}
+            <a href="{{ url_for('artists.edit', artist_id=artist.id) }}"
+               class="btn btn--secondary btn--sm">Edit</a>
+
+            {# Delete is only shown to (and only works for) the superuser #}
+            {% if current_user.is_superuser %}
+            <form method="POST"
+                  action="{{ url_for('artists.delete', artist_id=artist.id) }}"
+                  style="display:inline"
+                  onsubmit="return confirm('Delete artist \'{{ artist.name }}\'?')">
+              <button type="submit" class="btn btn--danger btn--sm">Delete</button>
+            </form>
+            {% endif %}
+          </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="4" style="text-align:center;color:#9e9e9e">No artists yet.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endblock %}

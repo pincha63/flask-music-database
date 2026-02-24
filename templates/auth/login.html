@@ -1,0 +1,59 @@
+{# auth/login.html — Login page (does not extend base.html, has its own layout) #}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign In — Music Database Manager</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+</head>
+<body>
+
+<div class="login-page">
+  <div class="login-card">
+
+    <div class="login-card__logo">
+      <h1>♪ Music DB</h1>
+      <p>Music Database Manager</p>
+    </div>
+
+    {# Flash messages on the login page #}
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <ul class="flash-list" style="margin-bottom:12px">
+          {% for category, message in messages %}
+            <li class="flash flash--{{ category }}">{{ message }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
+
+    {# Login form — POST to the same URL #}
+    <form method="POST" action="{{ url_for('auth.login') }}">
+
+      <div class="form-group">
+        <label for="username">Username</label>
+        <input type="text" id="username" name="username"
+               placeholder="e.g. sandro63" autofocus required>
+      </div>
+
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" required>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn btn--primary" style="width:100%">Sign In</button>
+      </div>
+
+    </form>
+
+    <p style="margin-top:14px;font-size:11px;color:#9e9e9e;text-align:center">
+      Demo accounts: <strong>sandro63</strong> (superuser) &nbsp;|&nbsp; <strong>guest</strong>
+    </p>
+
+  </div>
+</div>
+
+</body>
+</html>

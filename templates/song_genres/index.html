@@ -1,0 +1,75 @@
+{# song_genres/index.html — Manage song ↔ genre associations #}
+{% extends "base.html" %}
+
+{% block title %}Song ↔ Genres{% endblock %}
+{% block topbar_title %}Song ↔ Genres{% endblock %}
+
+{% block content %}
+
+  <div class="add-row">
+    <form method="POST" action="{{ url_for('song_genres.add') }}"
+          style="display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap;width:100%">
+
+      <div class="form-group">
+        <label for="song_id">Song</label>
+        <select id="song_id" name="song_id" required>
+          <option value="">— song —</option>
+          {% for song in songs %}
+            <option value="{{ song.id }}">{{ song.title }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="genre_id">Genre</label>
+        <select id="genre_id" name="genre_id" required>
+          <option value="">— genre —</option>
+          {% for genre in genres %}
+            <option value="{{ genre.id }}">{{ genre.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <button type="submit" class="btn btn--primary btn--sm">Add</button>
+    </form>
+  </div>
+
+  <p class="record-count">{{ rows|length }} association{{ 's' if rows|length != 1 }}</p>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Song</th>
+          <th>Genre</th>
+          {% if current_user.is_superuser %}<th style="width:100px">Actions</th>{% endif %}
+        </tr>
+      </thead>
+      <tbody>
+        {% for row in rows %}
+        <tr>
+          <td>{{ row.song_title }}</td>
+          <td>{{ row.genre_name }}</td>
+          {% if current_user.is_superuser %}
+          <td>
+            <form method="POST" action="{{ url_for('song_genres.remove') }}"
+                  style="display:inline"
+                  onsubmit="return confirm('Remove this association?')">
+              <input type="hidden" name="song_id"  value="{{ row.song_id }}">
+              <input type="hidden" name="genre_id" value="{{ row.genre_id }}">
+              <button type="submit" class="btn btn--danger btn--sm">Remove</button>
+            </form>
+          </td>
+          {% endif %}
+        </tr>
+        {% else %}
+        <tr>
+          <td colspan="{{ 3 if current_user.is_superuser else 2 }}"
+              style="text-align:center;color:#9e9e9e">No associations yet.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+{% endblock %}

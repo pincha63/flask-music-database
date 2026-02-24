@@ -1,0 +1,39 @@
+{# artists/form.html — Shared create/edit form for artists.
+   Variables:
+     action  : "Create" or "Update"
+     artist  : existing artist row (None for create)
+#}
+{% extends "base.html" %}
+
+{% block title %}{{ action }} Artist{% endblock %}
+{% block topbar_title %}{{ action }} Artist{% endblock %}
+
+{% block topbar_actions %}
+  <a href="{{ url_for('artists.index') }}" class="btn btn--secondary btn--sm">← Back</a>
+{% endblock %}
+
+{% block content %}
+  <div class="form-card">
+    <form method="POST">
+
+      <div class="form-group">
+        <label for="name">Name *</label>
+        <input type="text" id="name" name="name"
+               value="{{ artist.name if artist else '' }}"
+               placeholder="Artist name" required autofocus>
+      </div>
+
+      <div class="form-group">
+        <label for="bio">Bio</label>
+        <textarea id="bio" name="bio"
+                  placeholder="Optional biography">{{ artist.bio if artist else '' }}</textarea>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn btn--primary">{{ action }}</button>
+        <a href="{{ url_for('artists.index') }}" class="btn btn--secondary">Cancel</a>
+      </div>
+
+    </form>
+  </div>
+{% endblock %}

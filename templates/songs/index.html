@@ -1,0 +1,49 @@
+{# songs/index.html — List all songs #}
+{% extends "base.html" %}
+
+{% block title %}Songs{% endblock %}
+{% block topbar_title %}Songs{% endblock %}
+
+{% block topbar_actions %}
+  <a href="{{ url_for('songs.create') }}" class="btn btn--primary btn--sm">+ New Song</a>
+{% endblock %}
+
+{% block content %}
+  <p class="record-count">{{ songs|length }} record{{ 's' if songs|length != 1 }}</p>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th style="width:60px">ID</th>
+          <th>Title</th>
+          <th style="width:90px">Duration</th>
+          <th style="width:130px">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for song in songs %}
+        <tr>
+          <td>{{ song.id }}</td>
+          <td>{{ song.title }}</td>
+          <td>{{ song.duration_display or '—' }}</td>
+          <td>
+            <a href="{{ url_for('songs.edit', song_id=song.id) }}"
+               class="btn btn--secondary btn--sm">Edit</a>
+            {% if current_user.is_superuser %}
+            <form method="POST"
+                  action="{{ url_for('songs.delete', song_id=song.id) }}"
+                  style="display:inline"
+                  onsubmit="return confirm('Delete song \'{{ song.title }}\'?')">
+              <button type="submit" class="btn btn--danger btn--sm">Delete</button>
+            </form>
+            {% endif %}
+          </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="4" style="text-align:center;color:#9e9e9e">No songs yet.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endblock %}

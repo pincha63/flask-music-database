@@ -1,0 +1,120 @@
+{# base.html — Master layout template.
+   All other templates extend this one via {% extends "base.html" %}.
+   Blocks available to child templates:
+     - title     : page <title> suffix
+     - topbar_title : heading shown in the top bar
+     - topbar_actions : buttons shown on the right of the top bar
+     - content   : main page body
+#}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Music DB{% endblock %} — Music Database Manager</title>
+  {# Compiled CSS from static/scss/main.scss via build_css.py #}
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+</head>
+<body>
+
+<div class="layout">
+
+  {# ── Sidebar ─────────────────────────────────────────────── #}
+  <aside class="sidebar">
+    <div class="sidebar__logo">♪ Music DB</div>
+
+    <nav>
+      <div class="sidebar__section-label">Catalogue</div>
+
+      <a href="{{ url_for('home.index') }}"
+         class="sidebar__link {% if request.endpoint == 'home.index' %}sidebar__link--active{% endif %}">
+        ⊞ Dashboard
+      </a>
+
+      <a href="{{ url_for('artists.index') }}"
+         class="sidebar__link {% if request.blueprint == 'artists' %}sidebar__link--active{% endif %}">
+        🎤 Artists
+      </a>
+
+      <a href="{{ url_for('albums.index') }}"
+         class="sidebar__link {% if request.blueprint == 'albums' %}sidebar__link--active{% endif %}">
+        💿 Albums
+      </a>
+
+      <a href="{{ url_for('songs.index') }}"
+         class="sidebar__link {% if request.blueprint == 'songs' %}sidebar__link--active{% endif %}">
+        ♫ Songs
+      </a>
+
+      <a href="{{ url_for('genres.index') }}"
+         class="sidebar__link {% if request.blueprint == 'genres' %}sidebar__link--active{% endif %}">
+        🏷 Genres
+      </a>
+
+      <div class="sidebar__section-label">Associations</div>
+
+      <a href="{{ url_for('album_songs.index') }}"
+         class="sidebar__link {% if request.blueprint == 'album_songs' %}sidebar__link--active{% endif %}">
+        ↔ Album ↔ Songs
+      </a>
+
+      <a href="{{ url_for('song_genres.index') }}"
+         class="sidebar__link {% if request.blueprint == 'song_genres' %}sidebar__link--active{% endif %}">
+        ↔ Song ↔ Genres
+      </a>
+
+      <a href="{{ url_for('album_genres.index') }}"
+         class="sidebar__link {% if request.blueprint == 'album_genres' %}sidebar__link--active{% endif %}">
+        ↔ Album ↔ Genres
+      </a>
+    </nav>
+
+    {# ── User info & sign-out ─────────────────────────────── #}
+    <div class="sidebar__footer">
+      <div class="user-info">
+        <div class="avatar">{{ current_user.id[0].upper() }}</div>
+        <div>
+          <div class="username">{{ current_user.id }}</div>
+          {% if current_user.is_superuser %}
+            <span class="badge badge--superuser">superuser</span>
+          {% else %}
+            <span class="badge badge--user">user</span>
+          {% endif %}
+        </div>
+      </div>
+      <a href="{{ url_for('auth.logout') }}" class="signout-link">Sign out</a>
+    </div>
+  </aside>
+
+  {# ── Main area ────────────────────────────────────────────── #}
+  <div class="main">
+
+    {# Top bar with page title and optional action buttons #}
+    <header class="topbar">
+      <div class="topbar__title">{% block topbar_title %}{% endblock %}</div>
+      <div class="topbar__actions">{% block topbar_actions %}{% endblock %}</div>
+    </header>
+
+    {# Page content #}
+    <div class="content">
+
+      {# Flash messages — rendered once per request #}
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          <ul class="flash-list">
+            {% for category, message in messages %}
+              <li class="flash flash--{{ category }}">{{ message }}</li>
+            {% endfor %}
+          </ul>
+        {% endif %}
+      {% endwith %}
+
+      {% block content %}{% endblock %}
+
+    </div>{# /.content #}
+  </div>{# /.main #}
+
+</div>{# /.layout #}
+
+</body>
+</html>

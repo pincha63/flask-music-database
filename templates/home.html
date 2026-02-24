@@ -1,0 +1,49 @@
+{# home.html — Dashboard showing record counts for all seven tables #}
+{% extends "base.html" %}
+
+{% block title %}Dashboard{% endblock %}
+{% block topbar_title %}Music Database Manager{% endblock %}
+
+{% block content %}
+  <p class="record-count">Browse and manage artists, albums, songs, genres, and their associations.</p>
+
+  {# Summary cards — one per entity #}
+  <div class="dashboard-grid">
+
+    <a href="{{ url_for('artists.index') }}" class="stat-card">
+      <div class="stat-card__count">{{ counts.artists }}</div>
+      <div class="stat-card__label">🎤 Artists</div>
+    </a>
+
+    <a href="{{ url_for('albums.index') }}" class="stat-card">
+      <div class="stat-card__count">{{ counts.albums }}</div>
+      <div class="stat-card__label">💿 Albums</div>
+    </a>
+
+    <a href="{{ url_for('songs.index') }}" class="stat-card">
+      <div class="stat-card__count">{{ counts.songs }}</div>
+      <div class="stat-card__label">♫ Songs</div>
+    </a>
+
+    <a href="{{ url_for('genres.index') }}" class="stat-card">
+      <div class="stat-card__count">{{ counts.genres }}</div>
+      <div class="stat-card__label">🏷 Genres</div>
+    </a>
+
+    <a href="{{ url_for('album_songs.index') }}" class="stat-card">
+      <div class="stat-card__count">{{ counts.album_songs }}</div>
+      <div class="stat-card__label">↔ Album ↔ Songs</div>
+    </a>
+
+    <a href="{{ url_for('song_genres.index') }}" class="stat-card">
+      <div class="stat-card__count">{{ counts.song_genres }}</div>
+      <div class="stat-card__label">↔ Song ↔ Genres</div>
+    </a>
+
+    <a href="{{ url_for('album_genres.index') }}" class="stat-card">
+      <div class="stat-card__count">{{ counts.album_genres }}</div>
+      <div class="stat-card__label">↔ Album ↔ Genres</div>
+    </a>
+
+  </div>
+{% endblock %}
